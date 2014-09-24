@@ -10,13 +10,15 @@ angular.module('ev-leaflet', ['leaflet-directive'])
     })
     .directive('evLeaflet', ['leafletData', 'evLeaflet', '$log', function (leafletData, evLeaflet, $log) {
         return {
-            template: '<leaflet class="ev-leaflet" defaults="defaults" markers="markers" center="center"></leaflet>',
+            template: '<leaflet class="ev-leaflet" defaults="defaults" markers="markers" center="mapCenter"></leaflet>',
             restrict: 'AE',
             scope: {
-                coordinate: '=',
-                editable: '='
+                center: '=',
+                marker: '=',
+                editable: '=',
+                defaultZoom: '='
             },
-            controller:function ($scope) {
+            controller: function ($scope) {
 
                 // Icons settings
                 var baseIcon = {
@@ -49,22 +51,22 @@ angular.module('ev-leaflet', ['leaflet-directive'])
                 centerOnMarker();
 
                 // Double binding between coordinate and marker's position
-                $scope.$watch('coordinate.latitude', function (lat) {
-                    if(isNaN(lat)) {
-                        lat = 0;
+                $scope.$watch('marker.latitude', function (lat) {
+                    if (isNaN(lat)) {
                         $log.warn('ev-leaflet: latitude is not a number');
+                    } else {
+                        $scope.markers.marker.lat = lat;
+                        centerOnMarker();
                     }
-                    $scope.markers.marker.lat = lat;
-                    centerOnMarker();
                 });
 
-                $scope.$watch('coordinate.longitude', function (lng) {
-                    if(isNaN(lng)) {
-                        lng = 0;
+                $scope.$watch('marker.longitude', function (lng) {
+                    if (isNaN(lng)) {
                         $log.warn('ev-leaflet: longitude is not a number');
+                    } else {
+                        $scope.markers.marker.lng = lng;
+                        centerOnMarker();
                     }
-                    $scope.markers.marker.lng = lng;
-                    centerOnMarker();
                 });
 
                 $scope.$watch('markers.marker.lat', function (lat) {
@@ -77,11 +79,19 @@ angular.module('ev-leaflet', ['leaflet-directive'])
 
                 // Setting map center
                 function centerOnMarker() {
-                    $scope.center = {
-                        lat: $scope.markers.marker.lat,
-                        lng: $scope.markers.marker.lng,
-                        zoom: 8
-                    };
+                    if ($scope.center) {
+                        $scope.mapCenter = {
+                            lat: $scope.center.latitude,
+                            lng: $scope.center.longitude,
+                            zoom: $scope.defaultZoom || 8
+                        };
+                    } else {
+                        $scope.mapCenter = {
+                            lat: $scope.markers.marker.lat,
+                            lng: $scope.markers.marker.lng,
+                            zoom: $scope.defaultZoom || 8
+                        };
+                    }
                 }
 
                 $scope.$watch('editable', function () {
