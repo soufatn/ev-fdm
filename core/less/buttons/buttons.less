@@ -70,13 +70,15 @@
 
 // Default value
 .btn:not(.btn-primary):not(.btn-secondary):not(.btn-tertiary) {
-    .btn-secondary;
+    &:extend(.btn-secondary all);
 }
 
 // Colors
 //
 // You can change the color of the button by adding any of these classes. You can customize the list of colored button
 // you need by changing the list of colors in the `buttons/variable.less` file.
+// But there is more! You can use the environment notion ([env](https://github.com/Evaneos/ev-fdm/wiki/Environment-specific)) by simply using the .btn-env class
+// This will inherit the colors from your env (env-pool for instance)
 //
 //
 // .btn-soil - A button color soil (default value, this class is optional)
@@ -88,6 +90,7 @@
 // <button class="btn btn-primary {$modifiers}">Button</button>
 // <button class="btn btn-secondary {$modifiers}">Button</button>
 // <button class="btn btn-tertiary {$modifiers}">Button</button>
+// <div class="env-pool"><button class="btn btn-primary btn-env">Button env</button></div>
 //
 // Styleguide 2.3
 
@@ -99,7 +102,12 @@
     .btn-@{color} {
         .btn-color-variant(@@color);
     }
+
+    .env-@{color} .btn-env {
+        .btn-color-variant(@@color);
+    }
 }
+
 
 .btn-color-variant(@color) {
     @btn-border-lighten-factor: min(@btn-border-ligthess-factor, @btn-border-max-lighteness - lightness(@color));
@@ -142,14 +150,14 @@
 //
 // Styleguide 2.4
 
-.btn-primary { &, &:hover, &:active, &:disabled, &[disabled], &.disabled {
+.btn-primary:not(.priority-helper) { &, &:hover, &:active, &:disabled, &[disabled], &.disabled {
     color: white;
     border-color: transparent;
 } }
-.btn-secondary { &, &:hover, &:active, &:disabled, &[disabled], &.disabled {
+.btn-secondary:not(.priority-helper) { &, &:hover, &:active, &:disabled, &[disabled], &.disabled {
     background-color: transparent;
 } }
-.btn-tertiary { &, &:hover, &:active, &:disabled, &[disabled], &.disabled {
+.btn-tertiary:not(.priority-helper) { &, &:hover, &:active, &:disabled, &[disabled], &.disabled {
     background-color: transparent;
     border-color: transparent;
 } }
